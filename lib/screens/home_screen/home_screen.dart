@@ -1,7 +1,9 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
+
 import 'package:chatter/screens/profile/profile_screen.dart';
 import 'package:chatter/screens/widget/avatar_status_bar.dart';
+import 'package:chatter/screens/widget/profile_image.dart';
 import 'package:chatter/screens/widget/search.dart';
 import 'package:chatter/screens/widget/users_view.dart';
 import 'package:flutter/material.dart';
@@ -79,30 +81,6 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class ProfileHome extends StatelessWidget {
-  const ProfileHome({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Container(
-        height: 60,
-        width: 60,
-        padding: const EdgeInsets.all(9),
-        decoration: BoxDecoration(
-          border: Border.all(width: 2, color: textWhite),
-          borderRadius: BorderRadius.circular(100),
-        ),
-        child: Image.asset(
-          'assets/login_img.jpg',
-          fit: BoxFit.fill,
         ),
       ),
     );

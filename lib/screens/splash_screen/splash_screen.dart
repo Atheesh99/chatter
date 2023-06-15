@@ -1,6 +1,6 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
-import 'package:chatter/screens/onboaring/onboaring_screen.dart';
+import 'package:chatter/screens/splash_screen/check_login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,6 +9,14 @@ class SplashScreen extends StatefulWidget {
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
+}
+
+Future gotohome() async {
+  await Future.delayed(const Duration(seconds: 2));
+
+  Get.offAll(() => const StateCheckingWidget(),
+      transition: Transition.circularReveal,
+      duration: const Duration(seconds: 1));
 }
 
 class _SplashScreenState extends State<SplashScreen>
@@ -23,17 +31,17 @@ class _SplashScreenState extends State<SplashScreen>
     curve: Curves.fastOutSlowIn,
   );
   @override
-  void initState() {
-    super.initState();
-    navigateToOnboarding();
-  }
+  // void initState() {
+  //   super.initState();
+  //   navigateToOnboarding();
+  // }
 
-  navigateToOnboarding() async {
-    await Future.delayed(const Duration(seconds: 3), () {});
-    if (mounted) {
-      Get.to(() => const OnboardingScreen());
-    }
-  }
+  // navigateToOnboarding() async {
+  //   await Future.delayed(const Duration(seconds: 3), () {});
+  //   if (mounted) {
+  //     Get.to(() => const OnboardingScreen());
+  //   }
+  // }
 
   @override
   dispose() {
@@ -43,6 +51,9 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      gotohome();
+    });
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,

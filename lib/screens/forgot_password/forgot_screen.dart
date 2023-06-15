@@ -1,16 +1,25 @@
+import 'dart:developer';
+
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
-import 'package:chatter/screens/login/login_screen.dart';
+import 'package:chatter/controllers/form_validation.dart';
+import 'package:chatter/function/authendication/google_sigin.dart';
 import 'package:chatter/screens/widget/custom_form_field.dart';
+import 'package:chatter/screens/widget/login_main.dart';
 import 'package:chatter/screens/widget/sigin_login_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ForgotPasswordScreen extends StatelessWidget {
-  const ForgotPasswordScreen({super.key});
-
+  ForgotPasswordScreen({super.key});
+  final TextEditingController forgotPasswordController =
+      TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(FormValidationLginAndSignup());
+
     return Scaffold(
       backgroundColor: backgroundwhite,
       body: Padding(
@@ -63,13 +72,35 @@ class ForgotPasswordScreen extends StatelessWidget {
                     text: 'Email',
                     keyboardType: TextInputType.emailAddress,
                     prefixIcon: Icons.email_outlined,
-                    controller: controller.emailcontroller,
+                    controller: forgotPasswordController,
                   ),
                 ),
                 kHeight30,
-                const SiginAndLoginBUtton(
-                  text: 'Forgot Password',
-                  size: 18,
+                Obx(
+                  () => isLoading.value
+                      ? const CircularProgressIndicator()
+                      : GestureDetector(
+                          onTap: () async {
+                            var forgotEmail =
+                                forgotPasswordController.text.trim();
+                            isLoading.value = true;
+                            try {
+                              await FirebaseAuth.instance
+                                  .sendPasswordResetEmail(email: forgotEmail)
+                                  .then((value) {
+                                log('Email send');
+                                Get.off(() => const Signin());
+                              });
+                            } on FirebaseAuthException catch (e) {
+                              log('Reset Password Error: $e');
+                            }
+                            isLoading.value = false;
+                          },
+                          child: const SiginAndLoginBUtton(
+                            text: 'Forgot Password',
+                            size: 18,
+                          ),
+                        ),
                 )
               ],
             ),

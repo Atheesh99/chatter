@@ -1,8 +1,8 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
 import 'package:chatter/controllers/form_validation.dart';
-import 'package:chatter/screens/main_screen/main_screen.dart';
-
+import 'package:chatter/function/authendication/google_sigin.dart';
+import 'package:chatter/function/authendication/signup.dart';
 import 'package:chatter/screens/widget/already_password.dart';
 import 'package:chatter/screens/widget/custom_form_field.dart';
 import 'package:chatter/screens/widget/image_login_text.dart';
@@ -10,14 +10,13 @@ import 'package:chatter/screens/widget/sigin_login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-final controller = Get.put(FormValidationLginAndSignup());
-
 class SignInScreen extends StatelessWidget {
-  const SignInScreen({super.key});
+  SignInScreen({super.key});
+  //final User? currentuser = FirebaseAuth.instance.currentUser;
 
+  final controller = Get.put(FormValidationLginAndSignup());
   @override
   Widget build(BuildContext context) {
-    final cntrl = Get.put(FormValidationLginAndSignup());
     return Scaffold(
       backgroundColor: backgroundwhite,
       body: SingleChildScrollView(
@@ -50,7 +49,7 @@ class SignInScreen extends StatelessWidget {
                     kHeight20,
                     CustomformField(
                       onSave: (value) {
-                        controller.email = value!;
+                        controller.email = value!.trim();
                       },
                       validator: (value) {
                         return controller.validateEmail(value!);
@@ -71,10 +70,10 @@ class SignInScreen extends StatelessWidget {
                           return controller.validatePassword(value!);
                         },
                         ontap: () {
-                          cntrl.isPasswordVisibility.value =
-                              !cntrl.isPasswordVisibility.value;
+                          controller.isPasswordVisibility.value =
+                              !controller.isPasswordVisibility.value;
                         },
-                        hide: cntrl.isPasswordVisibility.value,
+                        hide: controller.isPasswordVisibility.value,
                         text: 'Password',
                         suffixIcon1: Icons.visibility_off_rounded,
                         suffixIcon2: Icons.visibility_outlined,
@@ -83,17 +82,29 @@ class SignInScreen extends StatelessWidget {
                       ),
                     ),
                     kHeight30,
-                    ///////////////pending
-                    GestureDetector(
-                      onTap: () {
-                        controller.checkSignup();
-
-                        Get.to(() => const MainScreen());
-                      },
-                      child: const SiginAndLoginBUtton(
-                        text: 'Create an account',
-                        size: 18,
-                      ),
+                    Obx(
+                      () => isLoading.value
+                          ? const CircularProgressIndicator()
+                          : GestureDetector(
+                              onTap: () async {
+                                controller.checkSignup();
+                                // await signupfun(
+                                //   username: controller.password,
+                                //   useremail: controller.email,
+                                //   userpassword: controller.password,
+                                // );
+                                AuthicationModelEmail authicationmodelemail =
+                                    AuthicationModelEmail();
+                                await authicationmodelemail.emailSignIn(
+                                    username: controller.username,
+                                    email: controller.email,
+                                    password: controller.password);
+                              },
+                              child: const SiginAndLoginBUtton(
+                                text: 'Create an account',
+                                size: 18,
+                              ),
+                            ),
                     ),
                     kHeight30,
                     const AlreadyAccountLogin(

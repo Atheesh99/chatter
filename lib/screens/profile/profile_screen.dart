@@ -1,7 +1,9 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
+import 'package:chatter/screens/widget/profile_image.dart';
 import 'package:chatter/screens/widget/search.dart';
 import 'package:chatter/screens/widget/sigin_login_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,6 +12,7 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User? user = auth.currentUser;
     return Scaffold(
       backgroundColor: backgroundBlack,
       body: SafeArea(
@@ -41,11 +44,18 @@ class ProfileScreen extends StatelessWidget {
                       clipBehavior: Clip.none,
                       fit: StackFit.expand,
                       children: [
-                        const CircleAvatar(
-                          backgroundImage:
-                              AssetImage('assets/chatapp icon.jpg'),
-                          radius: 60,
-                        ),
+                        user?.photoURL != null
+                            ? CircleAvatar(
+                                backgroundImage: NetworkImage(
+                                  FirebaseAuth.instance.currentUser!.photoURL
+                                      .toString(),
+                                ),
+                                radius: 60,
+                              )
+                            : const CircleAvatar(
+                                backgroundImage:
+                                    AssetImage('assets/avatr_person.png'),
+                              ),
                         Positioned(
                           bottom: -10,
                           right: -25,
@@ -61,9 +71,9 @@ class ProfileScreen extends StatelessWidget {
                     ),
                   ),
                   kHeight20,
-                  const Text(
-                    'Amal Kvs',
-                    style: TextStyle(
+                  Text(
+                    FirebaseAuth.instance.currentUser!.displayName.toString(),
+                    style: const TextStyle(
                         color: textWhite,
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
@@ -117,7 +127,7 @@ class ProfileScreen extends StatelessWidget {
                         const SiginAndLoginBUtton(
                           text: 'Add',
                           size: 20,
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -131,10 +141,7 @@ class ProfileScreen extends StatelessWidget {
   }
 
   TextField profileTextField(
-    String title1,
-    String title2,
-    TextInputType? keyboardType,
-  ) {
+      String title1, String title2, TextInputType? keyboardType) {
     return TextField(
       decoration: InputDecoration(
           border: InputBorder.none, labelText: title1, hintText: title2),

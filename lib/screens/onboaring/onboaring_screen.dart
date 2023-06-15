@@ -1,5 +1,6 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
+import 'package:chatter/function/authendication/google_sigin.dart';
 import 'package:chatter/screens/login/login_screen.dart';
 import 'package:chatter/screens/signin/signin_screen.dart';
 import 'package:chatter/screens/widget/already_password.dart';
@@ -55,24 +56,27 @@ class OnboardingScreen extends StatelessWidget {
               ),
             ),
             kHeight40,
-
-            //////////////////////////////////////////pending/////////////
-            GestureDetector(
-              onTap: () {},
-              child: Button(
-                  text: 'Sign up with google',
-                  image: Image.asset('assets/google_icon.png',
-                      fit: BoxFit.contain),
-                  size: 15),
+            Obx(
+              () => isLoading.value
+                  ? const CircularProgressIndicator()
+                  : GestureDetector(
+                      onTap: () {
+                        AuthServiceGoogle authService = AuthServiceGoogle();
+                        authService.signinwithgoogle();
+                      },
+                      child: Button(
+                          text: 'Sign up with google',
+                          image: Image.asset('assets/google_icon.png',
+                              fit: BoxFit.contain),
+                          size: 15),
+                    ),
             ),
             kHeight40,
             const DividerOrDivider(color: textWhite),
             kHeight40,
-            //////////////////////pending////////////
-
             GestureDetector(
               onTap: () {
-                Get.to(() => const SignInScreen());
+                Get.to(() => SignInScreen());
               },
               child: Button(
                   text: 'Sign up with mail',

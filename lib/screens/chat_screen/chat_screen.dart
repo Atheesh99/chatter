@@ -1,5 +1,6 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
+import 'package:chatter/model/chatuser.dart';
 import 'package:chatter/screens/widget/chat_text_field.dart';
 import 'package:chatter/screens/widget/item_chat_user.dart';
 import 'package:chatter/screens/widget/search.dart';
@@ -7,9 +8,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ChatScreen extends StatelessWidget {
-  const ChatScreen({super.key});
+class ChatScreen extends StatefulWidget {
+  ChatScreen({
+    super.key,
+  });
 
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +57,7 @@ class ChatScreen extends StatelessWidget {
                   ],
                 ),
                 kHeight20,
-                userName('Antony Arakal'),
+                userName("Atheesh"),
                 kHeight20,
                 Expanded(
                   child: Container(
@@ -114,4 +122,15 @@ class ChatScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class ChatPageArguments {
+  final String peerId;
+  final String peerAvatar;
+  final String peerNickname;
+
+  ChatPageArguments(
+      {required this.peerId,
+      required this.peerAvatar,
+      required this.peerNickname});
 }

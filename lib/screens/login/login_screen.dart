@@ -1,8 +1,9 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
 import 'package:chatter/controllers/form_validation.dart';
+import 'package:chatter/function/authendication/google_sigin.dart';
+import 'package:chatter/function/authendication/login.dart';
 import 'package:chatter/screens/forgot_password/forgot_screen.dart';
-import 'package:chatter/screens/main_screen/main_screen.dart';
 import 'package:chatter/screens/signin/signin_screen.dart';
 import 'package:chatter/screens/widget/custom_form_field.dart';
 import 'package:chatter/screens/widget/divider_or_divider.dart';
@@ -11,14 +12,17 @@ import 'package:chatter/screens/widget/sigin_login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-final controller = Get.put(FormValidationLginAndSignup());
-
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  @override
   Widget build(BuildContext context) {
-    final cntrl = Get.put(FormValidationLginAndSignup());
+    final controller = Get.put(FormValidationLginAndSignup());
     return Scaffold(
       backgroundColor: backgroundwhite,
       body: SingleChildScrollView(
@@ -36,17 +40,17 @@ class LoginScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     CustomformField(
-                      hide: false,
                       onSave: (value) {
-                        controller.username = value!;
+                        controller.email = value!.trim();
                       },
                       validator: (value) {
-                        return controller.validateUsername(value!);
+                        return controller.validateEmail(value!);
                       },
-                      text: 'User Name',
-                      keyboardType: TextInputType.name,
-                      prefixIcon: Icons.person_outline_outlined,
-                      controller: controller.usernamecontroller,
+                      hide: false,
+                      text: 'Email',
+                      keyboardType: TextInputType.emailAddress,
+                      prefixIcon: Icons.email_outlined,
+                      controller: controller.emailcontroller,
                     ),
                     kHeight20,
                     Obx(
@@ -58,10 +62,10 @@ class LoginScreen extends StatelessWidget {
                           return controller.validatePassword(value!);
                         },
                         ontap: () {
-                          cntrl.isPasswordVisibility.value =
-                              !cntrl.isPasswordVisibility.value;
+                          controller.isPasswordVisibility.value =
+                              !controller.isPasswordVisibility.value;
                         },
-                        hide: cntrl.isPasswordVisibility.value,
+                        hide: controller.isPasswordVisibility.value,
                         text: 'Password',
                         prefixIcon: Icons.lock_outlined,
                         suffixIcon1: Icons.visibility_off_rounded,
@@ -70,21 +74,28 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                     kHeight30,
-                    ////////////////////pending
-                    GestureDetector(
-                      onTap: () {
-                        controller.checkLogin();
-                        Get.to(() => const MainScreen());
-                      },
-                      child: const SiginAndLoginBUtton(
-                        text: 'Login',
-                        size: 20,
-                      ),
+                    Obx(
+                      () => isLoading.value
+                          ? const CircularProgressIndicator()
+                          : GestureDetector(
+                              onTap: () async {
+                                controller.checkLogin();
+                                AuthenticationModelEmail methods =
+                                    AuthenticationModelEmail();
+                                await methods.loginUser(
+                                    email: controller.email,
+                                    password: controller.password);
+                              },
+                              child: const SiginAndLoginBUtton(
+                                text: 'Login',
+                                size: 20,
+                              ),
+                            ),
                     ),
                     kHeight20,
                     GestureDetector(
                       onTap: () {
-                        Get.to(() => const ForgotPasswordScreen());
+                        Get.to(() => ForgotPasswordScreen());
                       },
                       child: const Text(
                         'Forgot Password ?',
@@ -106,7 +117,7 @@ class LoginScreen extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: (() {
-                            Get.to(() => const SignInScreen());
+                            Get.to(() => SignInScreen());
                           }),
                           child: const Text(
                             "  SignUp",

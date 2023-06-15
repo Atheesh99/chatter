@@ -1,7 +1,11 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
+import 'package:chatter/screens/profile/profile_screen.dart';
+import 'package:chatter/screens/widget/profile_image.dart';
 import 'package:chatter/screens/widget/setting_listtile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -40,17 +44,18 @@ class SettingScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(
-                        top: 20,
-                      ),
-                      child: _userNameListtile('Amal Kvs',
+                      padding: const EdgeInsets.only(top: 20, left: 10),
+                      child: _userNameListtile(
                           'I can change everything in this world.....@'),
                     ),
                     kHeight30,
-                    const SettingsListtile(
-                        icon: Icons.person,
-                        title: 'Profile',
-                        subtitle: 'Add avatar,name,bio'),
+                    GestureDetector(
+                      onTap: () => Get.to(() => const ProfileScreen()),
+                      child: const SettingsListtile(
+                          icon: Icons.person,
+                          title: 'Profile',
+                          subtitle: 'Add avatar,name,bio'),
+                    ),
                     kHeight10,
                     const SettingsListtile(
                         icon: Icons.message_rounded,
@@ -70,7 +75,7 @@ class SettingScreen extends StatelessWidget {
                     const SettingsListtile(
                         icon: Icons.people_outline_outlined,
                         title: 'Invite a friend',
-                        subtitle: ''),
+                        subtitle: 'welcom toi the chatter'),
                     kHeight10,
                   ],
                 ),
@@ -82,15 +87,24 @@ class SettingScreen extends StatelessWidget {
     );
   }
 
-  ListTile _userNameListtile(String title, String subtitle) {
+  ListTile _userNameListtile(String subtitle) {
+    User? user = auth.currentUser;
     return ListTile(
-      leading: const CircleAvatar(
-        backgroundImage: AssetImage('assets/chatapp icon.jpg'),
-        radius: 50,
-        backgroundColor: Colors.transparent,
+      leading: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(50),
+          child: user?.photoURL != null
+              ? Image.network(
+                  FirebaseAuth.instance.currentUser!.photoURL.toString(),
+                )
+              : Image.asset('assets/avatr_person.png'),
+        ),
       ),
       title: Text(
-        title,
+        FirebaseAuth.instance.currentUser!.displayName.toString(),
         style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
         softWrap: false,
         maxLines: 1,
