@@ -2,35 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
 class FormValidationLginAndSignup extends GetxController {
-  final GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
-  final GlobalKey<FormState> signupformkey = GlobalKey<FormState>();
-  late TextEditingController emailcontroller,
-      passwordcontroller,
-      usernamecontroller;
-
   var email = '';
   var username = '';
   var password = '';
 
   var isPasswordVisibility = true.obs;
-
-  @override
-  void onInit() {
-    emailcontroller = TextEditingController();
-    passwordcontroller = TextEditingController();
-    usernamecontroller = TextEditingController();
-    super.onInit();
-  }
-
-  // @override
-  // void dispose() {
-  //   super.dispose();
-  // }
-
-  // @override
-  // void onReady() {
-  //   super.onReady();
-  // }
 
 //////////// mailvalidation
   String? validateEmail(String email) {
@@ -78,19 +54,25 @@ class FormValidationLginAndSignup extends GetxController {
     }
   }
 
-  void checkLogin() {
-    final isvalid = loginFormKey.currentState!.validate();
-    if (!isvalid) {
-      return;
-    }
-    loginFormKey.currentState!.save();
-  }
+// Validate all fields on button press
+  bool validateForm() {
+    final emailError = validateEmail(email);
+    final usernameError = validateUsername(username);
+    final passwordError = validatePassword(password);
 
-  void checkSignup() {
-    final isvalid = signupformkey.currentState!.validate();
-    if (!isvalid) {
-      return;
+    // Display validation errors if any
+    if (emailError != null) {
+      Get.snackbar('Error', emailError);
+      return false;
+    } else if (usernameError != null) {
+      Get.snackbar('Error', usernameError);
+      return false;
+    } else if (passwordError != null) {
+      Get.snackbar('Error', passwordError);
+      return false;
     }
-    signupformkey.currentState!.save();
+
+    // All fields are valid
+    return true;
   }
 }

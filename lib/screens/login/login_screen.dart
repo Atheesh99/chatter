@@ -1,9 +1,12 @@
+import 'dart:developer';
+
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
 import 'package:chatter/controllers/form_validation.dart';
-import 'package:chatter/function/authendication/google_sigin.dart';
-import 'package:chatter/function/authendication/login.dart';
+import 'package:chatter/function/authendication/signup.dart';
+import 'package:chatter/function/image_picker.dart';
 import 'package:chatter/screens/forgot_password/forgot_screen.dart';
+import 'package:chatter/screens/main_screen/main_screen.dart';
 import 'package:chatter/screens/signin/signin_screen.dart';
 import 'package:chatter/screens/widget/custom_form_field.dart';
 import 'package:chatter/screens/widget/divider_or_divider.dart';
@@ -11,6 +14,7 @@ import 'package:chatter/screens/widget/image_login_text.dart';
 import 'package:chatter/screens/widget/sigin_login_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,6 +24,10 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
+  String email = "";
+  String password = "";
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(FormValidationLginAndSignup());
@@ -31,15 +39,21 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             children: [
               const ImageLoginText(
+                  height: 0.41,
                   imagepath: "assets/login_img.jpg",
                   text: 'Login',
                   title: 'Please signin to continue'),
               Form(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                key: controller.loginFormKey,
+                key: formKey,
                 child: Column(
                   children: [
                     CustomformField(
+                      onChanged: (value) {
+                        setState(() {
+                          email = value;
+                        });
+                      },
                       onSave: (value) {
                         controller.email = value!.trim();
                       },
@@ -50,11 +64,15 @@ class _LoginScreenState extends State<LoginScreen> {
                       text: 'Email',
                       keyboardType: TextInputType.emailAddress,
                       prefixIcon: Icons.email_outlined,
-                      controller: controller.emailcontroller,
                     ),
                     kHeight20,
                     Obx(
                       () => CustomformField(
+                        onChanged: (value) {
+                          setState(() {
+                            password = value;
+                          });
+                        },
                         onSave: (value) {
                           controller.password = value!;
                         },
@@ -70,28 +88,23 @@ class _LoginScreenState extends State<LoginScreen> {
                         prefixIcon: Icons.lock_outlined,
                         suffixIcon1: Icons.visibility_off_rounded,
                         suffixIcon2: Icons.visibility_outlined,
-                        controller: controller.passwordcontroller,
                       ),
                     ),
                     kHeight30,
-                    Obx(
-                      () => isLoading.value
-                          ? const CircularProgressIndicator()
-                          : GestureDetector(
-                              onTap: () async {
-                                controller.checkLogin();
-                                AuthenticationModelEmail methods =
-                                    AuthenticationModelEmail();
-                                await methods.loginUser(
-                                    email: controller.email,
-                                    password: controller.password);
-                              },
-                              child: const SiginAndLoginBUtton(
-                                text: 'Login',
-                                size: 20,
-                              ),
+                    _isLoading
+                        ? Center(
+                            child: LoadingAnimationWidget.discreteCircle(
+                                color: Colors.black, size: 30),
+                          )
+                        : GestureDetector(
+                            onTap: loginUser,
+                            //controller.validateForm;
+
+                            child: const SiginAndLoginBUtton(
+                              text: 'Login',
+                              size: 20,
                             ),
-                    ),
+                          ),
                     kHeight20,
                     GestureDetector(
                       onTap: () {
@@ -117,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         GestureDetector(
                           onTap: (() {
-                            Get.to(() => SignInScreen());
+                            Get.to(() => const SignInScreen());
                           }),
                           child: const Text(
                             "  SignUp",
@@ -135,5 +148,25 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
+  }
+
+  void loginUser() async {
+    // log('Login function calling');
+    setState(() {
+      _isLoading = true;
+    });
+
+    String res =
+        await AuthMethods().loginUser(email: email, password: password);
+    log('$email  .... $password');
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (res == 'success') {
+      Get.offAll(() => const MainScreen());
+    } else {
+      showSnackBar(context, res);
+    }
   }
 }

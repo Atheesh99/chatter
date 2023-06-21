@@ -2,10 +2,12 @@ import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
 import 'package:chatter/screens/chat_screen/chat_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
-import 'package:chatter/model/chatuser.dart' as model;
+import 'package:chatter/model/user_model.dart' as model;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class UserViewPerson extends StatefulWidget {
   const UserViewPerson(
@@ -14,7 +16,7 @@ class UserViewPerson extends StatefulWidget {
       required this.title,
       required this.subtitle,
       required this.timeText});
-  final Image image;
+  final String image;
   final String title;
   final String subtitle;
   final String timeText;
@@ -34,18 +36,26 @@ class _UserViewPersonState extends State<UserViewPerson> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-        stream: FirebaseFirestore.instance.collection('users').snapshots(),
-        builder: (context,
-            AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          return ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, index) => Slidable(
+    return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+      stream: FirebaseFirestore.instance.collection('users').snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: LoadingAnimationWidget.discreteCircle(
+                color: Colors.black, size: 50),
+          );
+        }
+        return ListView.builder(
+          physics: const BouncingScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: snapshot.data!.docs.length,
+          itemBuilder: (context, index) {
+            // Avoid the signed-in user in this list
+            if (snapshot.data!.docs[index].id ==
+                FirebaseAuth.instance.currentUser!.uid) {
+              return const SizedBox.shrink();
+            }
+            return Slidable(
               // key: ValueKey(0),
               endActionPane: ActionPane(
                 extentRatio: 0.5,
@@ -83,21 +93,34 @@ class _UserViewPersonState extends State<UserViewPerson> {
                       ),
                       child: ListTile(
                         onTap: () {
-                          Get.to(() => ChatScreen());
-                          setState(() {
-                            isSelected = index;
-                          });
+                          Get.to(
+                            () => ChatScreen(
+                              snap: model.UserModel.fromSnapshot(
+                                snapshot.data!.docs[index],
+                              ),
+                            ),
+                          );
+                          setState(
+                            () {
+                              isSelected = index;
+                            },
+                          );
                         },
                         minLeadingWidth: 70,
                         leading: Container(
-                          width: 60,
-                          height: 60,
+                          width: 65,
+                          height: 65,
                           padding: const EdgeInsets.all(3),
                           decoration: BoxDecoration(
-                            border: Border.all(width: 2, color: textGrey),
+                            border: Border.all(width: 2, color: Colors.grey),
                             shape: BoxShape.circle,
+                            image: DecorationImage(
+                              fit: BoxFit.cover,
+                              image: NetworkImage(
+                                snapshot.data!.docs[index]['photoUrl'],
+                              ),
+                            ),
                           ),
-                          child: widget.image,
                         ),
                         title: Text(
                           snapshot.data!.docs[index]['username'],
@@ -108,7 +131,7 @@ class _UserViewPersonState extends State<UserViewPerson> {
                           overflow: TextOverflow.fade,
                         ),
                         subtitle: Text(
-                          snapshot.data!.docs[index]['username'],
+                          snapshot.data!.docs[index]['bio'],
                           style: const TextStyle(
                             fontSize: 12,
                           ),
@@ -127,9 +150,11 @@ class _UserViewPersonState extends State<UserViewPerson> {
                   ),
                 ],
               ),
-            ),
-          );
-        });
+            );
+          },
+        );
+      },
+    );
   }
 
   slidableIcon(

@@ -1,9 +1,44 @@
 import 'package:chatter/const/color.dart';
+import 'package:chatter/function/image_picker.dart';
+import 'package:chatter/model/user_model.dart';
+import 'package:chatter/service/firebase_messeging.dart';
 
 import 'package:flutter/material.dart';
 
-class ChatTextField extends StatelessWidget {
-  const ChatTextField({Key? key}) : super(key: key);
+class ChatTextField extends StatefulWidget {
+  UserModel snap;
+  UserModel? currentUser;
+  ChatTextField({
+    Key? key,
+    required this.currentUser,
+    required this.snap,
+  }) : super(key: key);
+
+  @override
+  State<ChatTextField> createState() => _ChatTextFieldState();
+}
+
+class _ChatTextFieldState extends State<ChatTextField> {
+  String messages = "";
+  final _textController = TextEditingController();
+
+  void sendMessage() async {
+    FocusScope.of(context).unfocus();
+
+    //upload message
+    await FirebaseApi.uploadMessage(
+      currentUserId: widget.currentUser!.uid,
+      recieverId: widget.snap.uid,
+      message: messages,
+      recieverAvatharUrl: widget.snap.photoUrl,
+      recieverUsername: widget.snap.username,
+      // createdAt: DateTime.now(),
+    );
+
+    //
+    _textController.clear();
+    messages = '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -11,16 +46,29 @@ class ChatTextField extends StatelessWidget {
       child: Align(
         alignment: Alignment.bottomCenter,
         child: Container(
-          height: 120,
-          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-          color: Colors.transparent,
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 15),
+          color: textWhite,
           child: TextField(
+            autocorrect: true,
+            enableSuggestions: true,
+            textCapitalization: TextCapitalization.sentences,
+            controller: _textController,
+            onChanged: (value) {
+              setState(() {
+                messages = value;
+              });
+            },
             decoration: InputDecoration(
+              filled: true,
               hintText: 'Type your message...',
 
               //////pending   /////
-              suffixIcon: GestureDetector(
-                onTap: () {},
+              suffixIcon: InkWell(
+                onTap: () async {
+                  messages.trim().isEmpty
+                      ? showSnackBar(context, 'Type some message to sent!')
+                      : sendMessage();
+                },
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50),
@@ -28,12 +76,14 @@ class ChatTextField extends StatelessWidget {
                   padding: const EdgeInsets.all(14),
                   child: const Icon(
                     Icons.send_rounded,
-                    color: textWhite,
+                    color:
+                        //messages.trim().isEmpty ? textBlack :
+                        textWhite,
                     size: 28,
                   ),
                 ),
               ),
-              filled: true,
+
               fillColor: Colors.blueGrey[50],
               labelStyle: const TextStyle(fontSize: 12),
               contentPadding: const EdgeInsets.all(20),

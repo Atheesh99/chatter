@@ -1,9 +1,8 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
 import 'package:chatter/screens/profile/profile_screen.dart';
-import 'package:chatter/screens/widget/profile_image.dart';
 import 'package:chatter/screens/widget/setting_listtile.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:chatter/screens/widget/setting_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -43,10 +42,9 @@ class SettingScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20, left: 10),
-                      child: _userNameListtile(
-                          'I can change everything in this world.....@'),
+                    const Padding(
+                      padding: EdgeInsets.only(top: 20, left: 10),
+                      child: Settingprofile(),
                     ),
                     kHeight30,
                     GestureDetector(
@@ -83,39 +81,6 @@ class SettingScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  ListTile _userNameListtile(String subtitle) {
-    User? user = auth.currentUser;
-    return ListTile(
-      leading: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(50),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(50),
-          child: user?.photoURL != null
-              ? Image.network(
-                  FirebaseAuth.instance.currentUser!.photoURL.toString(),
-                )
-              : Image.asset('assets/avatr_person.png'),
-        ),
-      ),
-      title: Text(
-        FirebaseAuth.instance.currentUser!.displayName.toString(),
-        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        softWrap: false,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
-      subtitle: Text(
-        subtitle,
-        style: const TextStyle(fontSize: 12.4, letterSpacing: 0.5),
-        softWrap: false,
-        maxLines: 1,
-        overflow: TextOverflow.fade,
       ),
     );
   }

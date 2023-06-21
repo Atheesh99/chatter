@@ -9,6 +9,7 @@ import 'package:chatter/screens/widget/divider_or_divider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -58,7 +59,10 @@ class OnboardingScreen extends StatelessWidget {
             kHeight40,
             Obx(
               () => isLoading.value
-                  ? const CircularProgressIndicator()
+                  ? Center(
+                      child: LoadingAnimationWidget.discreteCircle(
+                          color: Colors.white, size: 50),
+                    )
                   : GestureDetector(
                       onTap: () {
                         AuthServiceGoogle authService = AuthServiceGoogle();
@@ -76,7 +80,7 @@ class OnboardingScreen extends StatelessWidget {
             kHeight40,
             GestureDetector(
               onTap: () {
-                Get.to(() => SignInScreen());
+                Get.to(() => const SignInScreen());
               },
               child: Button(
                   text: 'Sign up with mail',

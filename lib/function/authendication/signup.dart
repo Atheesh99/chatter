@@ -1,80 +1,96 @@
 import 'dart:math';
-import 'package:chatter/function/authendication/google_sigin.dart';
-import 'package:chatter/screens/main_screen/main_screen.dart';
+import 'dart:typed_data';
+import 'package:chatter/service/data_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:chatter/model/chatuser.dart' as model;
-import 'package:get/get.dart';
+import 'package:chatter/model/user_model.dart' as model;
 
-// signupfun(
-//     {required String username,
-//     required String userpassword,
-//     required String useremail,
-//     String? bio,
-//     Uint8List? file}) async {
-//   isLoading.value = true;
-// // var newIm='assets/avatr_person.png';
-//   String res = await AuthMethods().signUpUser(
-//     // file: file!,
-//     //  bio: bio ?? 'No bio',
-//     username: username,
-//     email: useremail,
-//     password: userpassword,
-//   );
-
-//   Get.offAll(() => const Signin(),
-//       transition: Transition.circularReveal,
-//       duration: const Duration(seconds: 1));
-//   isLoading.value = false;
-// }
-
-class AuthicationModelEmail {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+class AuthMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<User?> emailSignIn(
-      {required String username,
-      required String email,
-      required String password}) async {
-    User? currentUser = _firebaseAuth.currentUser;
+  //get user details
+  Future<model.UserModel> getUserDetails() async {
+    User currentUser = _auth.currentUser!;
 
-    //User is already authenticated, return the current user
-    if (currentUser != null) {
-      return currentUser;
-    }
-    isLoading.value = true;
+    DocumentSnapshot documentSnapshot =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+    return model.UserModel.fromSnapshot(documentSnapshot);
+  }
+
+  // sigin up user
+
+  Future<String> signUpUser({
+    required String email,
+    required String password,
+    required String username,
+    required String bio,
+    required Uint8List file,
+  }) async {
     try {
-      final UserCredential userCredential =
-          await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      final User? user = userCredential.user;
-      if (user != null) {
-        await _storeUserData(username, email, user.uid);
-        Get.offAll(() => const MainScreen(),
-            transition: Transition.circularReveal,
-            duration: const Duration(seconds: 1));
-        isLoading.value = false;
+      if (email.isNotEmpty &&
+          password.isNotEmpty &&
+          username.isNotEmpty &&
+          bio.isNotEmpty) {
+        // registering user in auth with email and password
+        UserCredential cred = await _auth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        String photoUrl = await StorageMethods().uploadImageToStorage(
+          'profilePics',
+          file,
+          false,
+        );
+
+        model.UserModel _user = model.UserModel(
+            username: username,
+            uid: cred.user!.uid,
+            photoUrl: photoUrl,
+            email: email,
+            bio: bio,
+            lastMessageTime: DateTime.now(),
+            status: 'offline');
+        // adding user in our database
+        await _firestore
+            .collection("users")
+            .doc(cred.user!.uid)
+            .set(_user.toJson());
+
+        return "success";
+      } else {
+        return "Please enter all the fields";
       }
-      return user;
-    } on FirebaseAuthException catch (e) {
-      log('Email Sign-in Error: $e' as num);
-      return null;
+    } on FirebaseException catch (err) {
+      return err.toString();
     }
   }
 
-  Future<void> _storeUserData(String username, String email, String uid) async {
-    final userData = model.UserModel(
-      username: username,
-      email: email,
-      uid: uid,
-      photoUrl: '',
-      lastMessageTime: DateTime.now(),
-      status: 'offline',
-      provide: 'Email',
-    );
+  // logging in user
+  Future<String> loginUser({
+    required String email,
+    required String password,
+  }) async {
+    String res = "Some error Occurred";
+    try {
+      if (email.isNotEmpty && password.isNotEmpty) {
+        // logging in user with email and password
+        await _auth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        res = "success";
+      } else {
+        res = "Please enter all the fields";
+      }
+    } catch (err) {
+      return err.toString();
+    }
+    return res;
+  }
 
-    await _firestore.collection('users').doc(uid).set(userData.toJson());
+  Future<void> signOut() async {
+    await _auth.signOut();
+    log("out" as num);
   }
 }

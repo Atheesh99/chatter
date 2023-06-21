@@ -8,11 +8,13 @@ class ImageLoginText extends StatelessWidget {
       {Key? key,
       required this.imagepath,
       required this.text,
+      required this.height,
       required this.title})
       : super(key: key);
   final String imagepath;
   final String text;
   final String title;
+  final num height;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class ImageLoginText extends StatelessWidget {
         Image.asset(
           imagepath,
           width: size.width * 0.9,
-          height: size.height * 0.41,
+          height: size.height * height,
         ),
         Text(
           text,

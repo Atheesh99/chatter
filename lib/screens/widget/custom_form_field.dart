@@ -5,18 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomformField extends StatelessWidget {
-  const CustomformField(
+  CustomformField(
       {Key? key,
       required this.text,
       this.keyboardType,
       required this.prefixIcon,
-      required this.controller,
+      this.controller,
       // required this.hide,
       this.validator,
       this.onSave,
       this.suffixIcon1,
       this.suffixIcon2,
       this.ontap,
+      this.onChanged,
       required this.hide})
       : super(key: key);
   final String text;
@@ -24,8 +25,9 @@ class CustomformField extends StatelessWidget {
   final IconData prefixIcon;
   final IconData? suffixIcon1;
   final IconData? suffixIcon2;
+  ValueChanged<String>? onChanged;
 
-  final TextEditingController controller;
+  final TextEditingController? controller;
   final bool hide;
   final String? Function(String?)? validator;
   final Function()? ontap;
@@ -37,6 +39,7 @@ class CustomformField extends StatelessWidget {
   Widget build(BuildContext context) {
     final cntrl = Get.put(FormValidationLginAndSignup());
     return TextFormField(
+      onChanged: onChanged,
       validator: validator,
       onSaved: onSave,
       controller: controller,

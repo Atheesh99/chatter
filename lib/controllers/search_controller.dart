@@ -7,10 +7,10 @@ class SearchController extends GetxController {
   final TextEditingController _search = TextEditingController();
   late Map<String, dynamic> usermap;
   void onSearch() async {
-    FirebaseFirestore _firestore = FirebaseFirestore.instance;
+    FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     isLoading = true as RxBool;
-    await _firestore
+    await firestore
         .collection('users')
         .where("username", isEqualTo: _search.text)
         .get()

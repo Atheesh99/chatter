@@ -1,6 +1,5 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
-
 import 'package:chatter/screens/profile/profile_screen.dart';
 import 'package:chatter/screens/widget/avatar_status_bar.dart';
 import 'package:chatter/screens/widget/profile_image.dart';
@@ -21,6 +20,7 @@ class HomeScreen extends StatelessWidget {
         child: Stack(
           children: [
             Row(
+              mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 GestureDetector(
@@ -47,12 +47,13 @@ class HomeScreen extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          const SearchIcon(icon: Icons.search, size: 30),
-                          kWidth20,
+                          InkWell(
+                              onTap: () {},
+                              child: const SearchIcon(
+                                  icon: Icons.search, size: 30)),
+                          kWidth10,
                           //////avatar status bar /////
-                          AvatarstatusBar(
-                            image: Image.asset('assets/google_icon.png'),
-                          ),
+                          const AvatarstatusBar(),
                           //////avatar status bar end  //////////
                         ],
                       ),
@@ -71,8 +72,8 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     ///// userview persons ///////
-                    child: UserViewPerson(
-                        image: Image.asset('assets/google_icon.png'),
+                    child: const UserViewPerson(
+                        image: ('assets/avatr_person.png'),
                         title: 'Akesh Chichu',
                         subtitle: 'Hello welcom to chatter....!',
                         timeText: '2 min ago'),

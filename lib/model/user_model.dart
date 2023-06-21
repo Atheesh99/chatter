@@ -10,17 +10,15 @@ class UserModel {
 
   final DateTime? lastMessageTime;
   final String status;
-  final String provide;
 
   const UserModel(
       {required this.username,
       required this.uid,
-      this.photoUrl = 'assets/avatr_person.png',
+      required this.photoUrl,
       required this.email,
-      this.bio = 'chat with your friends',
-      required this.provide,
-      this.lastMessageTime,
-      this.status = ''});
+      required this.bio,
+      required this.lastMessageTime,
+      required this.status});
 
   factory UserModel.fromSnapshot(DocumentSnapshot snapshot) {
     final data = snapshot.data() as Map<String, dynamic>;
@@ -30,8 +28,7 @@ class UserModel {
         uid: data["uid"],
         email: data["email"],
         photoUrl: data["photoUrl"] ?? 'assets/avatr_person.png',
-        provide: data['provide'] ?? '',
-        bio: data["bio"] ?? 'Chat with your friend',
+        bio: data["bio"] ?? '',
         lastMessageTime: Utils.toDateTime(data['lastMessageTime']),
         status: data['status'] ?? '');
   }
@@ -44,6 +41,5 @@ class UserModel {
         "bio": bio,
         'lastMessageTime': Utils.fromDateTimeToJson(lastMessageTime),
         'status': status,
-        'provide': provide,
       };
 }
