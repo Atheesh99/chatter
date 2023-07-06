@@ -5,10 +5,8 @@ import 'dart:developer';
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
 import 'package:chatter/controllers/form_validation.dart';
-import 'package:chatter/function/authendication/google_sigin.dart';
 import 'package:chatter/screens/login/login_screen.dart';
 import 'package:chatter/screens/widget/custom_form_field.dart';
-import 'package:chatter/screens/widget/login_main.dart';
 import 'package:chatter/screens/widget/sigin_login_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +15,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
-  ForgotPasswordScreen({super.key});
+  const ForgotPasswordScreen({super.key});
 
   @override
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
@@ -45,7 +43,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 ClipOval(
                   child: SizedBox.fromSize(
                     size: const Size.fromRadius(65), // Image radius
-                    child: Image.asset('assets/chatapp icon.jpg',
+                    child: Image.asset('assets/image/chatapp icon.jpg',
                         fit: BoxFit.cover),
                   ),
                 ),

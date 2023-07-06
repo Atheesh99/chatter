@@ -77,8 +77,8 @@ class _SplashScreenState extends State<SplashScreen>
               child: ClipOval(
                 child: SizedBox.fromSize(
                   size: const Size.fromRadius(75), // Image radius
-                  child:
-                      Image.asset('assets/chatapp icon.jpg', fit: BoxFit.cover),
+                  child: Image.asset('assets/image/chatapp icon.jpg',
+                      fit: BoxFit.cover),
                 ),
               ),
             ),

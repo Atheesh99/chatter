@@ -27,7 +27,7 @@ class UserModel {
         username: data["username"],
         uid: data["uid"],
         email: data["email"],
-        photoUrl: data["photoUrl"] ?? 'assets/avatr_person.png',
+        photoUrl: data["photoUrl"] ?? 'assets/image/avatr_person.png',
         bio: data["bio"] ?? '',
         lastMessageTime: Utils.toDateTime(data['lastMessageTime']),
         status: data['status'] ?? '');

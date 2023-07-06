@@ -31,7 +31,6 @@ class AuthServiceGoogle {
       final User? user = userCredential.user;
 
       if (user != null) {
-        //////////////////////////////////////////////
         model.UserModel _user = model.UserModel(
           bio: '',
           email: user.email ?? '',
@@ -42,7 +41,7 @@ class AuthServiceGoogle {
           username: user.displayName ?? '',
         );
         await _firestore.collection("users").doc(user.uid).set(_user.toJson());
-//////////////////////////////////////////
+
         Get.offAll(() => const MainScreen(),
             transition: Transition.circularReveal,
             duration: const Duration(seconds: 1));

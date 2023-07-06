@@ -1,7 +1,6 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
 import 'package:chatter/screens/widget/call_history_item.dart';
-import 'package:chatter/screens/widget/search.dart';
 import 'package:flutter/material.dart';
 
 import 'package:google_fonts/google_fonts.dart';
@@ -15,24 +14,18 @@ class CallScreen extends StatelessWidget {
       backgroundColor: backgroundBlack,
       body: SafeArea(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          // crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 30, right: 13),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  SearchIcon(icon: Icons.search, size: 25),
-                ],
+              padding: const EdgeInsets.only(top: 40),
+              child: Text(
+                'Call',
+                style: GoogleFonts.frankRuhlLibre(
+                    fontSize: 28,
+                    letterSpacing: 1.5,
+                    fontWeight: FontWeight.bold,
+                    color: textWhite),
               ),
-            ),
-            Text(
-              'Call',
-              style: GoogleFonts.frankRuhlLibre(
-                  fontSize: 28,
-                  letterSpacing: 1.5,
-                  fontWeight: FontWeight.bold,
-                  color: textWhite),
             ),
             kHeight20,
             Expanded(
@@ -46,10 +39,11 @@ class CallScreen extends StatelessWidget {
                     topRight: Radius.circular(50),
                   ),
                 ),
-                child: Column(
+                child: const Column(
+                  mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(left: 35, top: 20),
                       child: Text(
                         'Recent',
@@ -60,7 +54,7 @@ class CallScreen extends StatelessWidget {
                       ),
                     ),
                     kHeight20,
-                    CallHistoryItem(),
+                    Expanded(child: CallHistoryItem()),
                   ],
                 ),
               ),

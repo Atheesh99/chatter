@@ -40,7 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               const ImageLoginText(
                   height: 0.41,
-                  imagepath: "assets/login_img.jpg",
+                  imagepath: "assets/image/login_img.jpg",
                   text: 'Login',
                   title: 'Please signin to continue'),
               Form(

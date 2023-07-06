@@ -20,13 +20,13 @@ class FirebaseApi {
         .doc(recieverId)
         .collection('chats');
 
-    final newMessage = Message(
-      recieverId: recieverId,
-      senderId: currentUserId,
-      recieverAvatharUrl: recieverAvatharUrl,
-      recieverUsername: recieverUsername,
-      message: message,
+    Message newMessage = Message(
       createdAt: DateTime.now(),
+      message: message,
+      recieverAvatharUrl: recieverAvatharUrl,
+      recieverId: recieverId,
+      recieverUsername: recieverUsername,
+      senderId: currentUserId,
     );
 
     await refMessage.add(newMessage.tojson()).then(
@@ -39,8 +39,8 @@ class FirebaseApi {
         cRef.set({'lastMessage': message});
       },
     );
-    //adding datas to reciever's data base
 
+    //adding datas to reciever's data base
     final recieverRef = FirebaseFirestore.instance
         .collection('chats')
         .doc(recieverId)

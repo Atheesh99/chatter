@@ -17,6 +17,7 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Container(
         padding: const EdgeInsets.all(20),
         width: double.infinity,
@@ -70,7 +71,7 @@ class OnboardingScreen extends StatelessWidget {
                       },
                       child: Button(
                           text: 'Sign up with google',
-                          image: Image.asset('assets/google_icon.png',
+                          image: Image.asset('assets/image/google_icon.png',
                               fit: BoxFit.contain),
                           size: 15),
                     ),
@@ -84,8 +85,8 @@ class OnboardingScreen extends StatelessWidget {
               },
               child: Button(
                   text: 'Sign up with mail',
-                  image:
-                      Image.asset('assets/mail_icon.png', fit: BoxFit.contain),
+                  image: Image.asset('assets/image/mail_icon.png',
+                      fit: BoxFit.contain),
                   size: 15),
             ),
             kHeight40,

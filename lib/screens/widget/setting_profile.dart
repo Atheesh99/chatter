@@ -1,7 +1,9 @@
 import 'package:chatter/const/color.dart';
+import 'package:chatter/screens/profile/profile_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class Settingprofile extends StatelessWidget {
@@ -9,9 +11,9 @@ class Settingprofile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = FirebaseAuth.instance.currentUser;
-    final userRef =
-        FirebaseFirestore.instance.collection('users').doc(currentUser!.uid);
+    // final currentUser = FirebaseAuth.instance.currentUser;
+    // final userRef =
+    //     FirebaseFirestore.instance.collection('users').doc(currentUser!.uid);
     return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
       stream: FirebaseFirestore.instance
           .collection('users')
@@ -25,6 +27,9 @@ class Settingprofile extends StatelessWidget {
           );
         }
         return ListTile(
+          onTap: () {
+            Get.to(() => ProfileScreen(snap: snapshot.data));
+          },
           leading: Container(
             width: 60,
             height: 65,

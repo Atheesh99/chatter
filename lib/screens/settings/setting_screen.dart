@@ -1,11 +1,10 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/const/size.dart';
-import 'package:chatter/screens/profile/profile_screen.dart';
 import 'package:chatter/screens/widget/setting_listtile.dart';
 import 'package:chatter/screens/widget/setting_profile.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SettingScreen extends StatelessWidget {
   const SettingScreen({super.key});
@@ -19,7 +18,7 @@ class SettingScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 80),
+              padding: const EdgeInsets.only(top: 110),
               child: Text(
                 'Settings',
                 style: GoogleFonts.frankRuhlLibre(
@@ -47,33 +46,30 @@ class SettingScreen extends StatelessWidget {
                       child: Settingprofile(),
                     ),
                     kHeight30,
-                    GestureDetector(
-                      onTap: () => Get.to(() => const ProfileScreen()),
-                      child: const SettingsListtile(
-                          icon: Icons.person,
-                          title: 'Profile',
-                          subtitle: 'Add avatar,name,bio'),
-                    ),
-                    kHeight10,
                     const SettingsListtile(
                         icon: Icons.message_rounded,
                         title: 'Chat',
                         subtitle: 'Chat history,theme,wallpaper'),
                     kHeight10,
-                    const SettingsListtile(
-                        icon: Icons.notifications_none,
-                        title: 'Group Chat',
-                        subtitle: 'create group'),
+                    // const SettingsListtile(
+                    //     icon: Icons.notifications_none,
+                    //     title: 'Group Chat',
+                    //     subtitle: 'create group'),
                     kHeight10,
                     const SettingsListtile(
                         icon: Icons.help_outline,
                         title: 'Help',
                         subtitle: 'Help center, contact us,privacy policy'),
                     kHeight10,
-                    const SettingsListtile(
-                        icon: Icons.people_outline_outlined,
-                        title: 'Invite a friend',
-                        subtitle: 'welcom toi the chatter'),
+                    InkWell(
+                      onTap: () {
+                        Share.share("com.example.chatter");
+                      },
+                      child: const SettingsListtile(
+                          icon: Icons.people_outline_outlined,
+                          title: 'Invite a friend',
+                          subtitle: 'welcom toi the chatter'),
+                    ),
                     kHeight10,
                   ],
                 ),

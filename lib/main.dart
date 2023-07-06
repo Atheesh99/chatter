@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,11 +14,17 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  runApp(const MyApp());
+  final navigatorKey = GlobalKey<NavigatorState>();
+  ZegoUIKitPrebuiltCallInvitationService().setNavigatorKey(navigatorKey);
+  runApp(MyApp(navigatorKey: navigatorKey));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final GlobalKey<NavigatorState> navigatorKey;
+  const MyApp({
+    required this.navigatorKey,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +33,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => UserProvider()),
       ],
       child: GetMaterialApp(
+        navigatorKey: navigatorKey,
         title: 'Flutter Demo',
         theme: ThemeData(
           primarySwatch: Colors.blue,

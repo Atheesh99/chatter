@@ -1,27 +1,25 @@
 import 'package:chatter/const/color.dart';
 import 'package:chatter/model/chat_model.dart';
-import 'package:chatter/screens/widget/avatar.dart';
+import 'package:chatter/model/until.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
+// ignore: must_be_immutable
 class ItemChatUser extends StatelessWidget {
   ItemChatUser({
     Key? key,
     //required this.chat,
-    this.avatar,
+    // this.avatar,
     required this.message,
     required this.isMe,
   }) : super(key: key);
 
-  final String? avatar;
+//final String? avatar;
   final Message message;
   // final String? time;
   bool isMe;
 
   @override
   Widget build(BuildContext context) {
-    String formattedTime =
-        DateFormat('h:mm a').format(message.createdAt as DateTime);
     return Padding(
       padding: const EdgeInsets.all(3),
       child: Row(
@@ -29,15 +27,12 @@ class ItemChatUser extends StatelessWidget {
             isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          avatar != null
-              ? Avatar(
-                  image: avatar,
-                  size: 55,
+          !isMe
+              ? Text(
+                  Utils.formatDateTime(message.createdAt),
+                  style: const TextStyle(color: buttonColor, fontSize: 9),
                 )
-              : Text(
-                  formattedTime,
-                  style: const TextStyle(color: buttonColor, fontSize: 13),
-                ),
+              : const SizedBox(),
           Flexible(
             child: Container(
               margin: const EdgeInsets.only(left: 10, right: 10, top: 20),
@@ -70,8 +65,8 @@ class ItemChatUser extends StatelessWidget {
           //  chat == 1
           isMe
               ? Text(
-                  formattedTime,
-                  style: const TextStyle(color: buttonColor, fontSize: 13),
+                  Utils.formatDateTime(message.createdAt),
+                  style: const TextStyle(color: buttonColor, fontSize: 9),
                 )
               : const SizedBox(),
         ],

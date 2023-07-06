@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 class Utils {
   static StreamTransformer transformer<T>(
@@ -23,5 +24,26 @@ class Utils {
     if (date == null) return null;
 
     return date.toUtc();
+  }
+
+  static String formatDateTime(DateTime? dateTime) {
+    if (dateTime == null) return '';
+
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inMinutes == 0) {
+      return 'Just now';
+    } else if (difference.inMinutes < 10) {
+      return '${difference.inMinutes} min ago';
+    } else if (difference.inHours < 12) {
+      return DateFormat('h:mm a').format(dateTime);
+    } else if (difference.inDays == 1) {
+      return 'Yesterday';
+    } else if (difference.inDays < 365) {
+      return DateFormat('dd/MM/yyyy').format(dateTime);
+    } else {
+      return '';
+    }
   }
 }

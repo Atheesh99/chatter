@@ -47,7 +47,7 @@ class _SignInScreenState extends State<SignInScreen> {
             children: [
               const ImageLoginText(
                   height: 0.30,
-                  imagepath: 'assets/signup_img.jpg',
+                  imagepath: 'assets/image/signup_img.jpg',
                   text: 'Register',
                   title: 'Please register to login'),
               Form(
@@ -68,8 +68,8 @@ class _SignInScreenState extends State<SignInScreen> {
                                   backgroundImage: MemoryImage(image!),
                                 )
                               : const CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage("assets/avatr_person.png"),
+                                  backgroundImage: AssetImage(
+                                      "assets/image/avatr_person.png"),
                                   radius: 60,
                                 ),
 

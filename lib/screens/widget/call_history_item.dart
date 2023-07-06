@@ -1,92 +1,94 @@
 import 'package:chatter/const/size.dart';
+import 'package:chatter/model/call_model.dart';
+import 'package:chatter/model/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:zego_uikit_prebuilt_call/zego_uikit_prebuilt_call.dart';
 
-enum CallType { missed, incoming, outgoing }
+class CallHistoryItem extends StatefulWidget {
+  const CallHistoryItem({
+    Key? key,
+  }) : super(key: key);
 
-class CallHistory {
-  final String image;
-  final String name;
-  final String time;
-  final CallType callType;
-
-  CallHistory(this.image, this.name, this.time, this.callType);
+  @override
+  State<CallHistoryItem> createState() => _CallHistoryItemState();
 }
 
-class CallHistoryItem extends StatelessWidget {
-  CallHistoryItem({Key? key}) : super(key: key);
-
-  final List<CallHistory> callHistoryList = [
-    CallHistory("assets/chatapp icon.jpg", "John Doe", "today, 10:00 AM",
-        CallType.incoming),
-    CallHistory("assets/chatapp icon.jpg", "Jane Smith", " today, 11:00 AM",
-        CallType.outgoing),
-    CallHistory("assets/chatapp icon.jpg", "Bob Johnson", "yesterday, 12:00 PM",
-        CallType.missed),
-    CallHistory("assets/chatapp icon.jpg", "Sarah Lee", "yesterday, 1:00 PM",
-        CallType.incoming),
-  ];
+class _CallHistoryItemState extends State<CallHistoryItem> {
   final bool isSelected = false;
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const BouncingScrollPhysics(),
-      itemCount: callHistoryList.length,
-      itemBuilder: (context, index) {
-        final callHistoryItem = callHistoryList[index];
-        return ListTile(
-          tileColor: isSelected ? Colors.green : null,
-          selectedTileColor: Colors.grey[100],
-          horizontalTitleGap: 5,
-          leading: _buildLeading(callHistoryItem),
-          title: _buildTest(callHistoryItem),
-          subtitle: _buildSubtitile(callHistoryItem),
-          trailing: _buildTrailing(),
-        );
-      },
-    );
+    return StreamBuilder(
+        stream:
+            FirebaseFirestore.instance.collection("call_history").snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: LoadingAnimationWidget.discreteCircle(
+                  color: Colors.black, size: 50),
+            );
+          }
+
+          return ListView.separated(
+            separatorBuilder: (context, index) => kHeight10,
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(),
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, index) {
+              final bool isVideoCall =
+                  snapshot.data!.docs[index]['isVideoCall'];
+              return ListTile(
+                minLeadingWidth: 70,
+                tileColor: isSelected ? Colors.green : null,
+                selectedTileColor: Colors.grey[100],
+                horizontalTitleGap: 5,
+                leading: _buildLeading(snapshot.data!.docs[index]['image']),
+                title: _buildTest(snapshot.data!.docs[index]['name']),
+                subtitle: _buildSubtitile(
+                    snapshot.data!.docs[index]['time'].toString()),
+                trailing: _buildTrailing(isVideoCall),
+              );
+            },
+          );
+        });
   }
 
-  Row _buildTrailing() {
+  Row _buildTrailing(bool isVideoCall) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        /////pending/////
-        GestureDetector(
-          onTap: () {},
-          child: const Icon(
-            Icons.phone_in_talk_outlined,
-            size: 28,
-          ),
-        ),
-        kWidth20,
-        ///// pending/////
-        GestureDetector(
-          onTap: () {},
-          child: const Icon(
-            Icons.videocam_outlined,
-            size: 30,
-          ),
-        ),
+        isVideoCall
+            ? const Icon(
+                Icons.phone_in_talk_outlined,
+                size: 28,
+              )
+            : const Icon(
+                Icons.videocam_outlined,
+                size: 30,
+              ),
       ],
     );
   }
 
-  Row _buildSubtitile(CallHistory callHistoryItem) {
+  Row _buildSubtitile(String time) {
+    DateTime dateTime = DateTime.parse(time);
+    String formattedDate = DateFormat('d MMMM, h:mm a').format(dateTime);
     return Row(
       children: [
         Icon(
-          getIconData(callHistoryItem.callType),
-          color: getIconColor(callHistoryItem.callType),
+          getIconData(CallType.incoming),
+          color: getIconColor(CallType.incoming),
           size: 15,
         ),
         const SizedBox(
           width: 6.0,
         ),
         Text(
-          callHistoryItem.time,
+          formattedDate,
           style: const TextStyle(
             fontSize: 12,
           ),
@@ -98,9 +100,9 @@ class CallHistoryItem extends StatelessWidget {
     );
   }
 
-  Text _buildTest(CallHistory callHistoryItem) {
+  Text _buildTest(String name) {
     return Text(
-      callHistoryItem.name,
+      name,
       style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
       softWrap: false,
       maxLines: 1,
@@ -108,11 +110,21 @@ class CallHistoryItem extends StatelessWidget {
     );
   }
 
-  CircleAvatar _buildLeading(CallHistory callHistoryItem) {
-    return CircleAvatar(
-      backgroundImage: AssetImage(callHistoryItem.image),
-      radius: 43,
-      backgroundColor: Colors.transparent,
+  Container _buildLeading(String url) {
+    return Container(
+      width: 65,
+      height: 65,
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        border: Border.all(width: 2, color: Colors.grey),
+        shape: BoxShape.circle,
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: NetworkImage(
+            url,
+          ),
+        ),
+      ),
     );
   }
 
